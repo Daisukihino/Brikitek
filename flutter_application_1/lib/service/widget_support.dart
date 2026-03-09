@@ -13,4 +13,10 @@ class AppWidget{
       color: Colors.black, fontSize: 18.0,
     );
   }
+
+  static TextStyle whiteTextFeildStyle(){
+    return TextStyle(
+      color: Colors.white, fontSize: 18.0,fontWeight: FontWeight.bold
+    );
+  }
 }

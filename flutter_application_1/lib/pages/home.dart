@@ -14,6 +14,7 @@ class Home extends StatefulWidget{
 class _HomeState extends State<Home>{
 List<CategoryModel> categories = [];
 
+
 @override
 void initState() {
   categories = getCategories();
@@ -82,12 +83,20 @@ void initState() {
               )
           ],
         ),
-        ListView.builder(
-          shrinkWrap: true,
-           physics: NeverScrollableScrollPhysics(),
-          itemBuilder: (context, index){
-           return
-        })
+        SizedBox(height: 17.0,),
+        Container(
+          height: 60.0,
+           margin: EdgeInsets.only(top: 20.0),
+          child: ListView.builder(
+            shrinkWrap: true,
+            scrollDirection: Axis.horizontal,
+            itemCount: categories.length,
+            itemBuilder: (context, index){
+             return CategoryTile(
+              image: categories[index].image!,
+               name: categories[index].name!,categoryindex: index.toString(),);
+          }),
+        )
       ],),
       ),
     );
@@ -95,22 +104,42 @@ void initState() {
 }
 
 class CategoryTile extends StatefulWidget{
-  String name, image;
-  CategoryTile({ required this.name, required this.image});
+  String name, image, categoryindex;
+  CategoryTile({ required this.image, required this.name, required this.categoryindex});
 
   @override
   State<CategoryTile> createState() => _CategoryTileState();
 }
   class _CategoryTileState extends State<CategoryTile> {
+    String track = "0";
     @override
     Widget build(BuildContext context) {
-      return Container(
+      return GestureDetector(
+         onTap: () {
+  track = widget.categoryindex.toString();
+        setState(() {
+          
+        });
+        },
+        child: Container(
+          padding: EdgeInsets.only(left: 20.0, right: 20.0),
+        margin: EdgeInsets.only(right: 20.0),
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 35, 102, 4)),
+          color: Color.fromARGB(255, 35, 102, 4), borderRadius: BorderRadius.circular(30.0)),
         child: Row(children: [
- Image.asset(widget.image, height: 50.0, width: 50.0, fit: BoxFit.cover,),
- Text(widget.name, style: AppWidget.SimpleTextFeildStyle(),)
-        ],),
+ Image.asset(
+  widget.image, 
+  height: 40.0, 
+  width: 40.0, fit: BoxFit.cover,
+ ),
+ SizedBox(width: 10.0,),
+ Text(
+  widget.name,
+   style: AppWidget.whiteTextFeildStyle(),
+   )
+        ],
+        ),
+      ),
       );
     }
 
