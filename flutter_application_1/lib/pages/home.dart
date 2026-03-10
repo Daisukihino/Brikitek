@@ -13,6 +13,7 @@ class Home extends StatefulWidget{
 
 class _HomeState extends State<Home>{
 List<CategoryModel> categories = [];
+String track = "0";
 
 
 @override
@@ -85,7 +86,7 @@ void initState() {
         ),
         SizedBox(height: 17.0,),
         Container(
-          height: 60.0,
+          height: 70.0,
            margin: EdgeInsets.only(top: 20.0),
           child: ListView.builder(
             shrinkWrap: true,
@@ -93,54 +94,68 @@ void initState() {
             itemCount: categories.length,
             itemBuilder: (context, index){
              return CategoryTile(
-              image: categories[index].image!,
-               name: categories[index].name!,categoryindex: index.toString(),);
+              categories[index].name!, categories[index].image!,
+              index.toString());
           }),
         )
       ],),
       ),
     );
   }
-}
-
-class CategoryTile extends StatefulWidget{
-  String name, image, categoryindex;
-  CategoryTile({ required this.image, required this.name, required this.categoryindex});
-
-  @override
-  State<CategoryTile> createState() => _CategoryTileState();
-}
-  class _CategoryTileState extends State<CategoryTile> {
-    String track = "0";
-    @override
-    Widget build(BuildContext context) {
-      return GestureDetector(
+  Widget CategoryTile(String name, String image, String categoryindex){
+    return GestureDetector(
          onTap: () {
-  track = widget.categoryindex.toString();
+  track = categoryindex.toString();
         setState(() {
           
         });
         },
-        child: Container(
-          padding: EdgeInsets.only(left: 20.0, right: 20.0),
-        margin: EdgeInsets.only(right: 20.0),
+        child: track == categoryindex? 
+        Container(
+          margin: EdgeInsets.only(right: 20.0, bottom: 10.0),
+          child: Material(
+            elevation: 3.0,
+            borderRadius: BorderRadius.circular(30.0),
+            child: Container(
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+            
+            decoration: BoxDecoration(
+              color: Color.fromARGB(255, 35, 102, 4), borderRadius: BorderRadius.circular(30.0)),
+            child: Row(children: [
+             Image.asset(
+              image, 
+              height: 40.0, 
+              width: 40.0, fit: BoxFit.cover,
+             ),
+             SizedBox(width: 10.0,),
+             Text(
+              name,
+               style: AppWidget.whiteTextFeildStyle(),
+               )
+            ],
+            ),
+                  ),
+          ),
+        ): Container(
+        padding: EdgeInsets.only(left: 20.0, right: 20.0),
+        margin: EdgeInsets.only(right: 20.0, bottom: 10.0),
         decoration: BoxDecoration(
-          color: Color.fromARGB(255, 35, 102, 4), borderRadius: BorderRadius.circular(30.0)),
+          color: Color(0xFFececf8), borderRadius: BorderRadius.circular(30.0)
+        ),
         child: Row(children: [
- Image.asset(
-  widget.image, 
+          Image.asset(
+ image, 
   height: 40.0, 
   width: 40.0, fit: BoxFit.cover,
  ),
  SizedBox(width: 10.0,),
  Text(
-  widget.name,
-   style: AppWidget.whiteTextFeildStyle(),
+   name,
+   style: AppWidget.SimpleTextFeildStyle(),
    )
-        ],
-        ),
+        ],),
       ),
       );
-    }
-
+  }
 }
+
