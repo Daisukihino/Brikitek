@@ -6,6 +6,7 @@ class OrderHistoryItem {
   final String detail;
   final String price;
   final String status;
+  final String deliveryLocation;
 
   OrderHistoryItem({
     required this.image,
@@ -13,6 +14,7 @@ class OrderHistoryItem {
     required this.detail,
     required this.price,
     required this.status,
+    required this.deliveryLocation,
   });
 }
 
@@ -28,6 +30,7 @@ class OrderHistoryService {
   void addOrder({
     required List<CartItem> cartItems,
     required double total,
+    required String deliveryLocation,
   }) {
     final String summaryTitle = cartItems.length == 1
         ? cartItems.first.name
@@ -45,6 +48,7 @@ class OrderHistoryService {
         detail: summaryDetail,
         price: "PHP ${total.toStringAsFixed(2)}",
         status: "Preparing",
+        deliveryLocation: deliveryLocation,
       ),
     );
   }

@@ -33,6 +33,7 @@ class _FoodDetailState extends State<FoodDetail> {
   Widget build(BuildContext context) {
     final double width = MediaQuery.of(context).size.width;
     final bool isWide = width >= 720;
+    final bool isCompact = width < 420;
     final double total = double.parse(widget.price) * quantity;
 
     return Scaffold(
@@ -47,12 +48,21 @@ class _FoodDetailState extends State<FoodDetail> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _iconButton(Icons.arrow_back_ios_new_rounded, () {
                     Navigator.pop(context);
                   }),
-                  Text("Details", style: AppWidget.boldTextFeildStyle()),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                      child: Text(
+                        "Details",
+                        textAlign: TextAlign.center,
+                        style: AppWidget.boldTextFeildStyle(),
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ),
                   _iconButton(Icons.favorite_border_rounded, () {}),
                 ],
               ),
@@ -102,7 +112,7 @@ class _FoodDetailState extends State<FoodDetail> {
                 runSpacing: 12.0,
                 children: [
                   SizedBox(
-                    width: isWide ? 500.0 : width - 52.0,
+                    width: isWide ? 500.0 : double.infinity,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -137,14 +147,51 @@ class _FoodDetailState extends State<FoodDetail> {
                 ],
               ),
               const SizedBox(height: 20.0),
-              Wrap(
-                spacing: 10.0,
-                runSpacing: 10.0,
-                children: [
-                  SizedBox(width: isWide ? 220.0 : (width - 60.0) / 3, child: _infoTile(Icons.star_rounded, "4.8", "Rating", Colors.amber.shade700)),
-                  SizedBox(width: isWide ? 220.0 : (width - 60.0) / 3, child: _infoTile(Icons.delivery_dining_rounded, "20-30 min", "Delivery", widget.accentColor)),
-                  SizedBox(width: isWide ? 220.0 : (width - 60.0) / 3, child: _infoTile(Icons.local_fire_department_rounded, "320 kcal", "Energy", Colors.deepOrange)),
-                ],
+              LayoutBuilder(
+                builder: (context, constraints) {
+                  final double availableWidth = constraints.maxWidth;
+                  final int infoColumns = availableWidth >= 620
+                      ? 3
+                      : availableWidth >= 360
+                          ? 2
+                          : 1;
+                  final double tileWidth =
+                      (availableWidth - ((infoColumns - 1) * 10.0)) / infoColumns;
+
+                  return Wrap(
+                    spacing: 10.0,
+                    runSpacing: 10.0,
+                    children: [
+                      SizedBox(
+                        width: tileWidth,
+                        child: _infoTile(
+                          Icons.star_rounded,
+                          "4.8",
+                          "Rating",
+                          Colors.amber.shade700,
+                        ),
+                      ),
+                      SizedBox(
+                        width: tileWidth,
+                        child: _infoTile(
+                          Icons.delivery_dining_rounded,
+                          "20-30 min",
+                          "Delivery",
+                          widget.accentColor,
+                        ),
+                      ),
+                      SizedBox(
+                        width: tileWidth,
+                        child: _infoTile(
+                          Icons.local_fire_department_rounded,
+                          "320 kcal",
+                          "Energy",
+                          Colors.deepOrange,
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
               const SizedBox(height: 20.0),
               Container(
@@ -169,19 +216,40 @@ class _FoodDetailState extends State<FoodDetail> {
                         ),
                       ],
                     ),
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        _qtyButton(Icons.remove_rounded, quantity > 1 ? () => setState(() => quantity--) : null),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                          child: Text(
-                            quantity.toString(),
-                            style: const TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+                    Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isCompact ? 10.0 : 12.0,
+                        vertical: 8.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF3F5F2),
+                        borderRadius: BorderRadius.circular(18.0),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _qtyButton(
+                            Icons.remove_rounded,
+                            quantity > 1 ? () => setState(() => quantity--) : null,
                           ),
-                        ),
-                        _qtyButton(Icons.add_rounded, () => setState(() => quantity++)),
-                      ],
+                          Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isCompact ? 10.0 : 12.0,
+                            ),
+                            child: Text(
+                              quantity.toString(),
+                              style: const TextStyle(
+                                fontSize: 18.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          _qtyButton(
+                            Icons.add_rounded,
+                            () => setState(() => quantity++),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
@@ -214,54 +282,73 @@ class _FoodDetailState extends State<FoodDetail> {
                   color: widget.accentColor,
                   borderRadius: BorderRadius.circular(28.0),
                 ),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  runSpacing: 14.0,
-                  spacing: 14.0,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final bool stackActions = constraints.maxWidth < 360;
+
+                    return Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      runSpacing: 14.0,
+                      spacing: 14.0,
                       children: [
-                        const Text("Total Price", style: TextStyle(color: Colors.white70)),
-                        const SizedBox(height: 6.0),
-                        Text(
-                          "PHP ${total.toStringAsFixed(2)}",
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.bold,
+                        SizedBox(
+                          width: stackActions ? constraints.maxWidth : null,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                "Total Price",
+                                style: TextStyle(color: Colors.white70),
+                              ),
+                              const SizedBox(height: 6.0),
+                              Text(
+                                "PHP ${total.toStringAsFixed(2)}",
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 24.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(
+                          width: stackActions ? constraints.maxWidth : null,
+                          child: InkWell(
+                            onTap: () {
+                              CartService.instance.addItem(
+                                name: widget.name,
+                                image: widget.image,
+                                subtitle: widget.description,
+                                price: double.parse(widget.price),
+                                quantity: quantity,
+                              );
+                              Navigator.pushNamed(context, "/order");
+                            },
+                            borderRadius: BorderRadius.circular(18.0),
+                            child: Container(
+                              alignment: Alignment.center,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                                vertical: 14.0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(18.0),
+                              ),
+                              child: Text(
+                                "Order Now",
+                                style: TextStyle(
+                                  color: widget.accentColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
                           ),
                         ),
                       ],
-                    ),
-                    InkWell(
-                      onTap: () {
-                        CartService.instance.addItem(
-                          name: widget.name,
-                          image: widget.image,
-                          subtitle: widget.description,
-                          price: double.parse(widget.price),
-                          quantity: quantity,
-                        );
-                        Navigator.pushNamed(context, "/order");
-                      },
-                      borderRadius: BorderRadius.circular(18.0),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 14.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(18.0),
-                        ),
-                        child: Text(
-                          "Order Now",
-                          style: TextStyle(
-                            color: widget.accentColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+                    );
+                  },
                 ),
               ),
             ],

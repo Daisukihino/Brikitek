@@ -50,9 +50,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final bool isWide = screenWidth >= 700;
-    final double quickCardWidth = isWide ? 180.0 : (screenWidth - 64.0) / 3;
-    final double searchWidth = isWide ? screenWidth - 132.0 : screenWidth - 96.0;
-
+    final bool isCompact = screenWidth < 420;
     return Scaffold(
       body: SafeArea(
         child: Container(
@@ -92,13 +90,9 @@ class _HomeState extends State<Home> {
                 ],
               ),
               const SizedBox(height: 30.0),
-              Wrap(
-                spacing: 12.0,
-                runSpacing: 12.0,
-                crossAxisAlignment: WrapCrossAlignment.center,
+              Row(
                 children: [
-                  SizedBox(
-                    width: searchWidth,
+                  Expanded(
                     child: Container(
                       padding: const EdgeInsets.only(left: 20.0),
                       decoration: BoxDecoration(
@@ -119,6 +113,7 @@ class _HomeState extends State<Home> {
                       ),
                     ),
                   ),
+                  const SizedBox(width: 12.0),
                   Container(
                     padding: const EdgeInsets.all(8.0),
                     decoration: BoxDecoration(
@@ -132,41 +127,51 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 17.0),
               Container(
                 margin: const EdgeInsets.only(bottom: 8.0),
-                child: Wrap(
-                  spacing: 12.0,
-                  runSpacing: 12.0,
-                  children: [
-                    SizedBox(
-                      width: quickCardWidth,
-                      child: _quickActionCard(
-                        icon: Icons.shopping_bag_outlined,
-                        title: "Order",
-                        subtitle: "Current cart",
-                        color: const Color(0xFF0C7233),
-                        onTap: () => Navigator.pushNamed(context, "/order"),
-                      ),
-                    ),
-                    SizedBox(
-                      width: quickCardWidth,
-                      child: _quickActionCard(
-                        icon: Icons.account_balance_wallet_outlined,
-                        title: "Wallet",
-                        subtitle: "Balance",
-                        color: const Color(0xFFCC8B00),
-                        onTap: () => Navigator.pushNamed(context, "/wallet"),
-                      ),
-                    ),
-                    SizedBox(
-                      width: quickCardWidth,
-                      child: _quickActionCard(
-                        icon: Icons.receipt_long_outlined,
-                        title: "Orders",
-                        subtitle: "History",
-                        color: const Color(0xFFC0392B),
-                        onTap: () => Navigator.pushNamed(context, "/all-orders"),
-                      ),
-                    ),
-                  ],
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final int quickColumns = constraints.maxWidth >= 420 ? 3 : 1;
+                    final double quickCardWidth = quickColumns == 1
+                        ? constraints.maxWidth
+                        : (constraints.maxWidth - ((quickColumns - 1) * 12.0)) /
+                            quickColumns;
+
+                    return Wrap(
+                      spacing: 12.0,
+                      runSpacing: 12.0,
+                      children: [
+                        SizedBox(
+                          width: quickCardWidth,
+                          child: _quickActionCard(
+                            icon: Icons.shopping_bag_outlined,
+                            title: "Order",
+                            subtitle: "Current cart",
+                            color: const Color(0xFF0C7233),
+                            onTap: () => Navigator.pushNamed(context, "/order"),
+                          ),
+                        ),
+                        SizedBox(
+                          width: quickCardWidth,
+                          child: _quickActionCard(
+                            icon: Icons.account_balance_wallet_outlined,
+                            title: "Wallet",
+                            subtitle: "Balance",
+                            color: const Color(0xFFCC8B00),
+                            onTap: () => Navigator.pushNamed(context, "/wallet"),
+                          ),
+                        ),
+                        SizedBox(
+                          width: quickCardWidth,
+                          child: _quickActionCard(
+                            icon: Icons.receipt_long_outlined,
+                            title: "Orders",
+                            subtitle: "History",
+                            color: const Color(0xFFC0392B),
+                            onTap: () => Navigator.pushNamed(context, "/all-orders"),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ),
               SizedBox(
@@ -340,6 +345,7 @@ class _HomeState extends State<Home> {
     final Color accentColor = _getAccentColor(category);
     final Map<String, dynamic> details = _getFoodDetails(name, category);
     final double width = MediaQuery.of(context).size.width;
+    final bool isCompactCard = width < 420;
     final double imageSize = width >= 700 ? 120.0 : width < 380 ? 96.0 : 110.0;
 
     return GestureDetector(
@@ -360,8 +366,11 @@ class _HomeState extends State<Home> {
         );
       },
       child: Container(
-        margin: const EdgeInsets.only(right: 20.0),
-        padding: const EdgeInsets.only(left: 10.0, top: 10.0),
+        padding: EdgeInsets.only(
+          left: isCompactCard ? 12.0 : 10.0,
+          right: isCompactCard ? 12.0 : 0.0,
+          top: 10.0,
+        ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
           borderRadius: BorderRadius.circular(20.0),
@@ -386,25 +395,27 @@ class _HomeState extends State<Home> {
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
+            const SizedBox(height: 4.0),
             Text("PHP $price", style: AppWidget.priceTextFeildStyle()),
             const Spacer(),
-            const SizedBox(height: 60.0),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                Container(
-                  height: 50,
-                  width: 80,
-                  decoration: BoxDecoration(
-                    color: accentColor,
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(30.0),
-                      bottomRight: Radius.circular(10.0),
-                    ),
+            Align(
+              alignment: Alignment.bottomRight,
+              child: Container(
+                height: width < 380 ? 44.0 : 50.0,
+                width: width < 380 ? 68.0 : 80.0,
+                decoration: BoxDecoration(
+                  color: accentColor,
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(30.0),
+                    bottomRight: Radius.circular(10.0),
                   ),
-                  child: const Icon(Icons.arrow_forward, color: Colors.white, size: 30.0),
                 ),
-              ],
+                child: const Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                  size: 30.0,
+                ),
+              ),
             ),
           ],
         ),

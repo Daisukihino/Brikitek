@@ -116,6 +116,7 @@ class _AllOrdersPageState extends State<AllOrdersPage> {
           status: order.status,
           detail: order.detail,
           price: order.price,
+          deliveryLocation: order.deliveryLocation,
           statusColor: _statusColor(order.status),
         );
       },
@@ -146,6 +147,7 @@ class _OrderStatusCard extends StatelessWidget {
   final String status;
   final String detail;
   final String price;
+  final String deliveryLocation;
   final Color statusColor;
 
   const _OrderStatusCard({
@@ -154,6 +156,7 @@ class _OrderStatusCard extends StatelessWidget {
     required this.status,
     required this.detail,
     required this.price,
+    required this.deliveryLocation,
     required this.statusColor,
   });
 
@@ -202,6 +205,15 @@ class _OrderStatusCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 8.0),
                 Text(detail, style: const TextStyle(color: Colors.black54)),
+                const SizedBox(height: 8.0),
+                Text(
+                  deliveryLocation,
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 13.0,
+                    height: 1.4,
+                  ),
+                ),
                 const SizedBox(height: 8.0),
                 Text(
                   price,
