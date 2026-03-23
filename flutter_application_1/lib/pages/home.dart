@@ -120,58 +120,56 @@ class _HomeState extends State<Home> {
                       color: const Color.fromARGB(255, 12, 114, 51),
                       borderRadius: BorderRadius.circular(10.0),
                     ),
-                    child: Icon(Icons.search, color: Colors.grey[400], size: 30.0),
+                    child: Icon(
+                      Icons.search,
+                      color: Colors.grey[400],
+                      size: screenWidth < 380 ? 24.0 : 26.0,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 17.0),
               Container(
                 margin: const EdgeInsets.only(bottom: 8.0),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final int quickColumns = constraints.maxWidth >= 420 ? 3 : 1;
-                    final double quickCardWidth = quickColumns == 1
-                        ? constraints.maxWidth
-                        : (constraints.maxWidth - ((quickColumns - 1) * 12.0)) /
-                            quickColumns;
-
-                    return Wrap(
-                      spacing: 12.0,
-                      runSpacing: 12.0,
-                      children: [
-                        SizedBox(
-                          width: quickCardWidth,
-                          child: _quickActionCard(
-                            icon: Icons.shopping_bag_outlined,
-                            title: "Order",
-                            subtitle: "Current cart",
-                            color: const Color(0xFF0C7233),
-                            onTap: () => Navigator.pushNamed(context, "/order"),
-                          ),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: isCompact ? 180.0 : 200.0,
+                        child: _quickActionCard(
+                          icon: Icons.shopping_bag_outlined,
+                          title: "Order",
+                          subtitle: "Current cart",
+                          color: const Color(0xFF0C7233),
+                          onTap: () => Navigator.pushNamed(context, "/order"),
                         ),
-                        SizedBox(
-                          width: quickCardWidth,
-                          child: _quickActionCard(
-                            icon: Icons.account_balance_wallet_outlined,
-                            title: "Wallet",
-                            subtitle: "Balance",
-                            color: const Color(0xFFCC8B00),
-                            onTap: () => Navigator.pushNamed(context, "/wallet"),
-                          ),
+                      ),
+                      const SizedBox(width: 12.0),
+                      SizedBox(
+                        width: isCompact ? 180.0 : 200.0,
+                        child: _quickActionCard(
+                          icon: Icons.account_balance_wallet_outlined,
+                          title: "Wallet",
+                          subtitle: "Balance",
+                          color: const Color(0xFFCC8B00),
+                          onTap: () => Navigator.pushNamed(context, "/wallet"),
                         ),
-                        SizedBox(
-                          width: quickCardWidth,
-                          child: _quickActionCard(
-                            icon: Icons.receipt_long_outlined,
-                            title: "Orders",
-                            subtitle: "History",
-                            color: const Color(0xFFC0392B),
-                            onTap: () => Navigator.pushNamed(context, "/all-orders"),
-                          ),
+                      ),
+                      const SizedBox(width: 12.0),
+                      SizedBox(
+                        width: isCompact ? 180.0 : 200.0,
+                        child: _quickActionCard(
+                          icon: Icons.receipt_long_outlined,
+                          title: "Orders",
+                          subtitle: "History",
+                          color: const Color(0xFFC0392B),
+                          onTap: () =>
+                              Navigator.pushNamed(context, "/all-orders"),
                         ),
-                      ],
-                    );
-                  },
+                      ),
+                    ],
+                  ),
                 ),
               ),
               SizedBox(
@@ -189,7 +187,7 @@ class _HomeState extends State<Home> {
                     physics: const BouncingScrollPhysics(),
                     itemCount: categories.length,
                     itemBuilder: (context, index) {
-                      return CategoryTile(
+                      return categoryTile(
                         categories[index].name!,
                         categories[index].image!,
                         index.toString(),
@@ -224,44 +222,48 @@ class _HomeState extends State<Home> {
     if (track == "0") {
       return _buildFoodGrid(
         itemCount: filteredPizza.length,
-        itemBuilder: (index) => FoodTile(
+        itemBuilder: (index) => foodTile(
           filteredPizza[index].name!,
           filteredPizza[index].image!,
           filteredPizza[index].price!,
-          "Pizza",
+          'Pizza',
+          'pizza-$index',
         ),
       );
     }
     if (track == "1") {
       return _buildFoodGrid(
         itemCount: filteredBurger.length,
-        itemBuilder: (index) => FoodTile(
+        itemBuilder: (index) => foodTile(
           filteredBurger[index].name!,
           filteredBurger[index].image!,
           filteredBurger[index].price!,
-          "Burger",
+          'Burger',
+          'burger-$index',
         ),
       );
     }
     if (track == "2") {
       return _buildFoodGrid(
         itemCount: filteredChinese.length,
-        itemBuilder: (index) => FoodTile(
+        itemBuilder: (index) => foodTile(
           filteredChinese[index].name!,
           filteredChinese[index].image!,
           filteredChinese[index].price!,
-          "Chinese",
+          'Chinese',
+          'chinese-$index',
         ),
       );
     }
     if (track == "3") {
       return _buildFoodGrid(
         itemCount: filteredMexican.length,
-        itemBuilder: (index) => FoodTile(
+        itemBuilder: (index) => foodTile(
           filteredMexican[index].name!,
           filteredMexican[index].image!,
           filteredMexican[index].price!,
-          "Mexican",
+          'Mexican',
+          'mexican-$index',
         ),
       );
     }
@@ -281,21 +283,31 @@ class _HomeState extends State<Home> {
     required Widget Function(int index) itemBuilder,
   }) {
     final double width = MediaQuery.of(context).size.width;
-    final int crossAxisCount = width >= 900 ? 4 : width >= 700 ? 3 : 2;
-    final double aspectRatio = width < 380 ? 0.64 : 0.72;
+    final int crossAxisCount = width >= 1100
+        ? 4
+        : width >= 760
+        ? 3
+        : 2;
+    final double aspectRatio = width >= 1100
+        ? 0.84
+        : width >= 760
+        ? 0.78
+        : width < 380
+        ? 0.56
+        : 0.64;
 
     return Expanded(
       child: GridView.builder(
-          padding: EdgeInsets.zero,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: crossAxisCount,
-            childAspectRatio: aspectRatio,
-            mainAxisSpacing: 10.0,
-            crossAxisSpacing: 10.0,
-          ),
-          itemCount: itemCount,
-          itemBuilder: (context, index) => itemBuilder(index),
+        padding: EdgeInsets.zero,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: crossAxisCount,
+          childAspectRatio: aspectRatio,
+          mainAxisSpacing: 10.0,
+          crossAxisSpacing: 10.0,
         ),
+        itemCount: itemCount,
+        itemBuilder: (context, index) => itemBuilder(index),
+      ),
     );
   }
 
@@ -311,7 +323,10 @@ class _HomeState extends State<Home> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: EdgeInsets.symmetric(horizontal: compact ? 8.0 : 12.0, vertical: 14.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: compact ? 8.0 : 12.0,
+          vertical: 14.0,
+        ),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.10),
           borderRadius: BorderRadius.circular(20.0),
@@ -332,7 +347,10 @@ class _HomeState extends State<Home> {
             const SizedBox(height: 2.0),
             Text(
               subtitle,
-              style: TextStyle(color: Colors.black54, fontSize: compact ? 11.0 : 12.0),
+              style: TextStyle(
+                color: Colors.black54,
+                fontSize: compact ? 11.0 : 12.0,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ],
@@ -341,12 +359,24 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget FoodTile(String name, String image, String price, String category) {
+  Widget foodTile(
+    String name,
+    String image,
+    String price,
+    String category,
+    String heroTag,
+  ) {
     final Color accentColor = _getAccentColor(category);
     final Map<String, dynamic> details = _getFoodDetails(name, category);
     final double width = MediaQuery.of(context).size.width;
     final bool isCompactCard = width < 420;
-    final double imageSize = width >= 700 ? 120.0 : width < 380 ? 96.0 : 110.0;
+    final double imageSize = width >= 900
+        ? 104.0
+        : width >= 700
+        ? 96.0
+        : width < 380
+        ? 72.0
+        : 84.0;
 
     return GestureDetector(
       onTap: () {
@@ -361,15 +391,17 @@ class _HomeState extends State<Home> {
               description: details["description"] as String,
               ingredients: List<String>.from(details["ingredients"] as List),
               accentColor: accentColor,
+              heroTag: heroTag,
             ),
           ),
         );
       },
       child: Container(
-        padding: EdgeInsets.only(
-          left: isCompactCard ? 12.0 : 10.0,
-          right: isCompactCard ? 12.0 : 0.0,
-          top: 10.0,
+        padding: EdgeInsets.fromLTRB(
+          isCompactCard ? 10.0 : 12.0,
+          10.0,
+          isCompactCard ? 10.0 : 12.0,
+          12.0,
         ),
         decoration: BoxDecoration(
           border: Border.all(color: Colors.grey),
@@ -380,7 +412,7 @@ class _HomeState extends State<Home> {
           children: [
             Center(
               child: Hero(
-                tag: "$category-$name",
+                tag: heroTag,
                 child: Image.asset(
                   image,
                   height: imageSize,
@@ -391,18 +423,29 @@ class _HomeState extends State<Home> {
             ),
             Text(
               name,
-              style: AppWidget.boldTextFeildStyle(),
+              style: TextStyle(
+                fontSize: isCompactCard ? 15.0 : 17.0,
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+              ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
             ),
-            const SizedBox(height: 4.0),
-            Text("PHP $price", style: AppWidget.priceTextFeildStyle()),
+            const SizedBox(height: 6.0),
+            Text(
+              "PHP $price",
+              style: TextStyle(
+                color: accentColor,
+                fontSize: isCompactCard ? 16.0 : 18.0,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             const Spacer(),
             Align(
               alignment: Alignment.bottomRight,
               child: Container(
-                height: width < 380 ? 44.0 : 50.0,
-                width: width < 380 ? 68.0 : 80.0,
+                height: width < 380 ? 38.0 : 42.0,
+                width: width < 380 ? 56.0 : 64.0,
                 decoration: BoxDecoration(
                   color: accentColor,
                   borderRadius: const BorderRadius.only(
@@ -410,10 +453,10 @@ class _HomeState extends State<Home> {
                     bottomRight: Radius.circular(10.0),
                   ),
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.arrow_forward,
                   color: Colors.white,
-                  size: 30.0,
+                  size: width < 380 ? 24.0 : 26.0,
                 ),
               ),
             ),
@@ -441,43 +484,53 @@ class _HomeState extends State<Home> {
   Map<String, dynamic> _getFoodDetails(String name, String category) {
     final Map<String, Map<String, dynamic>> detailMap = {
       "Cheese Pizza": {
-        "description": "A rich cheese pizza with a soft crust and a warm oven-baked finish.",
+        "description":
+            "A rich cheese pizza with a soft crust and a warm oven-baked finish.",
         "ingredients": ["Mozzarella", "Tomato Sauce", "Oregano", "Crust"],
       },
       "Margherita pizza": {
-        "description": "A lighter pizza with basil, tomato, and creamy cheese in every slice.",
+        "description":
+            "A lighter pizza with basil, tomato, and creamy cheese in every slice.",
         "ingredients": ["Basil", "Mozzarella", "Tomato", "Olive Oil"],
       },
       "Cheese Burger": {
-        "description": "A juicy grilled burger stacked with melted cheese and fresh toppings.",
+        "description":
+            "A juicy grilled burger stacked with melted cheese and fresh toppings.",
         "ingredients": ["Beef Patty", "Cheddar", "Lettuce", "Bun"],
       },
       "Margherita Burger": {
-        "description": "A signature burger with rich sauce, layered cheese, and a bold bite.",
+        "description":
+            "A signature burger with rich sauce, layered cheese, and a bold bite.",
         "ingredients": ["Patty", "Cheese", "Tomato", "Special Sauce"],
       },
       "Chow Mein": {
-        "description": "Savory stir-fried noodles tossed with vegetables and a flavorful glaze.",
+        "description":
+            "Savory stir-fried noodles tossed with vegetables and a flavorful glaze.",
         "ingredients": ["Noodles", "Carrots", "Cabbage", "Soy Sauce"],
       },
       "Sweet and Sour": {
-        "description": "A sweet and tangy dish with bright flavor and a glossy, satisfying sauce.",
+        "description":
+            "A sweet and tangy dish with bright flavor and a glossy, satisfying sauce.",
         "ingredients": ["Bell Peppers", "Pineapple", "Sauce", "Chicken"],
       },
       "Fried Rice": {
-        "description": "Comforting wok-fried rice with vegetables and balanced seasoning.",
+        "description":
+            "Comforting wok-fried rice with vegetables and balanced seasoning.",
         "ingredients": ["Rice", "Egg", "Spring Onion", "Vegetables"],
       },
       "Dim Sum": {
-        "description": "Soft and savory bites inspired by classic dim sum favorites.",
+        "description":
+            "Soft and savory bites inspired by classic dim sum favorites.",
         "ingredients": ["Wrapper", "Pork Filling", "Shrimp", "Sesame Oil"],
       },
       "Beef Tacos": {
-        "description": "Crunchy tacos loaded with seasoned beef and fresh toppings.",
+        "description":
+            "Crunchy tacos loaded with seasoned beef and fresh toppings.",
         "ingredients": ["Beef", "Taco Shell", "Lettuce", "Salsa"],
       },
       "Chicken Burrito": {
-        "description": "A hearty burrito wrapped with chicken, rice, and creamy filling.",
+        "description":
+            "A hearty burrito wrapped with chicken, rice, and creamy filling.",
         "ingredients": ["Chicken", "Rice", "Beans", "Cheese"],
       },
       "Nachos": {
@@ -485,19 +538,26 @@ class _HomeState extends State<Home> {
         "ingredients": ["Corn Chips", "Cheese", "Jalapeno", "Tomato Salsa"],
       },
       "Quesadilla": {
-        "description": "A toasted tortilla folded around melty cheese and savory filling.",
+        "description":
+            "A toasted tortilla folded around melty cheese and savory filling.",
         "ingredients": ["Tortilla", "Cheese", "Chicken", "Peppers"],
       },
     };
 
     return detailMap[name] ??
         {
-          "description": "A freshly prepared $category dish made for a satisfying meal.",
-          "ingredients": ["Fresh Ingredients", "Seasoning", "Chef Special", "Sauce"],
+          "description":
+              "A freshly prepared $category dish made for a satisfying meal.",
+          "ingredients": [
+            "Fresh Ingredients",
+            "Seasoning",
+            "Chef Special",
+            "Sauce",
+          ],
         };
   }
 
-  Widget CategoryTile(String name, String image, String categoryindex) {
+  Widget categoryTile(String name, String image, String categoryindex) {
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -518,7 +578,12 @@ class _HomeState extends State<Home> {
                   ),
                   child: Row(
                     children: [
-                      Image.asset(image, height: 40.0, width: 40.0, fit: BoxFit.cover),
+                      Image.asset(
+                        image,
+                        height: 40.0,
+                        width: 40.0,
+                        fit: BoxFit.cover,
+                      ),
                       const SizedBox(width: 10.0),
                       Text(name, style: AppWidget.whiteTextFeildStyle()),
                     ],
@@ -535,7 +600,12 @@ class _HomeState extends State<Home> {
               ),
               child: Row(
                 children: [
-                  Image.asset(image, height: 40.0, width: 40.0, fit: BoxFit.cover),
+                  Image.asset(
+                    image,
+                    height: 40.0,
+                    width: 40.0,
+                    fit: BoxFit.cover,
+                  ),
                   const SizedBox(width: 10.0),
                   Text(name, style: AppWidget.SimpleTextFeildStyle()),
                 ],

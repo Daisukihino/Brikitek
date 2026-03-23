@@ -10,6 +10,7 @@ class FoodDetail extends StatefulWidget {
   final String description;
   final List<String> ingredients;
   final Color accentColor;
+  final String heroTag;
 
   const FoodDetail({
     super.key,
@@ -20,6 +21,7 @@ class FoodDetail extends StatefulWidget {
     required this.description,
     required this.ingredients,
     required this.accentColor,
+    required this.heroTag,
   });
 
   @override
@@ -45,313 +47,336 @@ class _FoodDetailState extends State<FoodDetail> {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 720.0),
               child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _iconButton(Icons.arrow_back_ios_new_rounded, () {
-                    Navigator.pop(context);
-                  }),
-                  Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12.0),
-                      child: Text(
-                        "Details",
-                        textAlign: TextAlign.center,
-                        style: AppWidget.boldTextFeildStyle(),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ),
-                  _iconButton(Icons.favorite_border_rounded, () {}),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(22.0),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [widget.accentColor.withValues(alpha: 0.16), Colors.white],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(30.0),
-                ),
-                child: Column(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 8.0),
-                      decoration: BoxDecoration(
-                        color: widget.accentColor,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Text(
-                        widget.category,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
+                  Row(
+                    children: [
+                      _iconButton(Icons.arrow_back_ios_new_rounded, () {
+                        Navigator.pop(context);
+                      }),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          child: Text(
+                            "Details",
+                            textAlign: TextAlign.center,
+                            style: AppWidget.boldTextFeildStyle(),
+                            overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 18.0),
-                    Hero(
-                      tag: "${widget.category}-${widget.name}",
-                      child: Image.asset(
-                        widget.image,
-                        height: isWide ? 280.0 : 230.0,
-                        fit: BoxFit.contain,
+                      _iconButton(Icons.favorite_border_rounded, () {}),
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(22.0),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          widget.accentColor.withValues(alpha: 0.16),
+                          Colors.white,
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
                       ),
+                      borderRadius: BorderRadius.circular(30.0),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 24.0),
-              Wrap(
-                spacing: 12.0,
-                runSpacing: 12.0,
-                children: [
-                  SizedBox(
-                    width: isWide ? 500.0 : double.infinity,
                     child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(widget.name, style: AppWidget.HeadlineTextFeildStyle()),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          widget.description,
-                          style: const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 16.0,
-                            height: 1.5,
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14.0,
+                            vertical: 8.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: widget.accentColor,
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          child: Text(
+                            widget.category,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 18.0),
+                        Hero(
+                          tag: widget.heroTag,
+                          child: Image.asset(
+                            widget.image,
+                            height: isWide ? 280.0 : 230.0,
+                            fit: BoxFit.contain,
                           ),
                         ),
                       ],
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(18.0),
-                    ),
-                    child: Text(
-                      "PHP ${widget.price}",
-                      style: TextStyle(
-                        color: widget.accentColor,
-                        fontSize: 20.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  final double availableWidth = constraints.maxWidth;
-                  final int infoColumns = availableWidth >= 620
-                      ? 3
-                      : availableWidth >= 360
-                          ? 2
-                          : 1;
-                  final double tileWidth =
-                      (availableWidth - ((infoColumns - 1) * 10.0)) / infoColumns;
-
-                  return Wrap(
-                    spacing: 10.0,
-                    runSpacing: 10.0,
+                  const SizedBox(height: 24.0),
+                  Wrap(
+                    spacing: 12.0,
+                    runSpacing: 12.0,
                     children: [
                       SizedBox(
-                        width: tileWidth,
-                        child: _infoTile(
-                          Icons.star_rounded,
-                          "4.8",
-                          "Rating",
-                          Colors.amber.shade700,
-                        ),
-                      ),
-                      SizedBox(
-                        width: tileWidth,
-                        child: _infoTile(
-                          Icons.delivery_dining_rounded,
-                          "20-30 min",
-                          "Delivery",
-                          widget.accentColor,
-                        ),
-                      ),
-                      SizedBox(
-                        width: tileWidth,
-                        child: _infoTile(
-                          Icons.local_fire_department_rounded,
-                          "320 kcal",
-                          "Energy",
-                          Colors.deepOrange,
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              ),
-              const SizedBox(height: 20.0),
-              Container(
-                padding: const EdgeInsets.all(18.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(24.0),
-                ),
-                child: Wrap(
-                  alignment: WrapAlignment.spaceBetween,
-                  runSpacing: 12.0,
-                  spacing: 12.0,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("Quantity", style: AppWidget.boldTextFeildStyle()),
-                        const SizedBox(height: 4.0),
-                        const Text(
-                          "Choose how many you want.",
-                          style: TextStyle(color: Colors.black54),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: isCompact ? 10.0 : 12.0,
-                        vertical: 8.0,
-                      ),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFF3F5F2),
-                        borderRadius: BorderRadius.circular(18.0),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _qtyButton(
-                            Icons.remove_rounded,
-                            quantity > 1 ? () => setState(() => quantity--) : null,
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: isCompact ? 10.0 : 12.0,
+                        width: isWide ? 500.0 : double.infinity,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              widget.name,
+                              style: AppWidget.HeadlineTextFeildStyle(),
                             ),
-                            child: Text(
-                              quantity.toString(),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              widget.description,
                               style: const TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold,
+                                color: Colors.black54,
+                                fontSize: 16.0,
+                                height: 1.5,
                               ),
                             ),
-                          ),
-                          _qtyButton(
-                            Icons.add_rounded,
-                            () => setState(() => quantity++),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 22.0),
-              Text("Ingredients", style: AppWidget.boldTextFeildStyle()),
-              const SizedBox(height: 12.0),
-              Wrap(
-                spacing: 10.0,
-                runSpacing: 10.0,
-                children: widget.ingredients
-                    .map(
-                      (ingredient) => Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 10.0),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14.0,
+                          vertical: 12.0,
+                        ),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(18.0),
-                          border: Border.all(color: const Color(0xFFE5E7EB)),
                         ),
-                        child: Text(ingredient),
+                        child: Text(
+                          "PHP ${widget.price}",
+                          style: TextStyle(
+                            color: widget.accentColor,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    )
-                    .toList(),
-              ),
-              const SizedBox(height: 24.0),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(20.0),
-                decoration: BoxDecoration(
-                  color: widget.accentColor,
-                  borderRadius: BorderRadius.circular(28.0),
-                ),
-                child: LayoutBuilder(
-                  builder: (context, constraints) {
-                    final bool stackActions = constraints.maxWidth < 360;
+                    ],
+                  ),
+                  const SizedBox(height: 20.0),
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final double availableWidth = constraints.maxWidth;
+                      final int infoColumns = availableWidth >= 620
+                          ? 3
+                          : availableWidth >= 360
+                          ? 2
+                          : 1;
+                      final double tileWidth =
+                          (availableWidth - ((infoColumns - 1) * 10.0)) /
+                          infoColumns;
 
-                    return Wrap(
+                      return Wrap(
+                        spacing: 10.0,
+                        runSpacing: 10.0,
+                        children: [
+                          SizedBox(
+                            width: tileWidth,
+                            child: _infoTile(
+                              Icons.star_rounded,
+                              "4.8",
+                              "Rating",
+                              Colors.amber.shade700,
+                            ),
+                          ),
+                          SizedBox(
+                            width: tileWidth,
+                            child: _infoTile(
+                              Icons.delivery_dining_rounded,
+                              "20-30 min",
+                              "Delivery",
+                              widget.accentColor,
+                            ),
+                          ),
+                          SizedBox(
+                            width: tileWidth,
+                            child: _infoTile(
+                              Icons.local_fire_department_rounded,
+                              "320 kcal",
+                              "Energy",
+                              Colors.deepOrange,
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 20.0),
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(24.0),
+                    ),
+                    child: Wrap(
                       alignment: WrapAlignment.spaceBetween,
-                      runSpacing: 14.0,
-                      spacing: 14.0,
+                      runSpacing: 12.0,
+                      spacing: 12.0,
                       children: [
-                        SizedBox(
-                          width: stackActions ? constraints.maxWidth : null,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Quantity",
+                              style: AppWidget.boldTextFeildStyle(),
+                            ),
+                            const SizedBox(height: 4.0),
+                            const Text(
+                              "Choose how many you want.",
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                          ],
+                        ),
+                        Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: isCompact ? 10.0 : 12.0,
+                            vertical: 8.0,
+                          ),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF3F5F2),
+                            borderRadius: BorderRadius.circular(18.0),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Text(
-                                "Total Price",
-                                style: TextStyle(color: Colors.white70),
+                              _qtyButton(
+                                Icons.remove_rounded,
+                                quantity > 1
+                                    ? () => setState(() => quantity--)
+                                    : null,
                               ),
-                              const SizedBox(height: 6.0),
-                              Text(
-                                "PHP ${total.toStringAsFixed(2)}",
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24.0,
-                                  fontWeight: FontWeight.bold,
+                              Padding(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isCompact ? 10.0 : 12.0,
                                 ),
+                                child: Text(
+                                  quantity.toString(),
+                                  style: const TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              _qtyButton(
+                                Icons.add_rounded,
+                                () => setState(() => quantity++),
                               ),
                             ],
                           ),
                         ),
-                        SizedBox(
-                          width: stackActions ? constraints.maxWidth : null,
-                          child: InkWell(
-                            onTap: () {
-                              CartService.instance.addItem(
-                                name: widget.name,
-                                image: widget.image,
-                                subtitle: widget.description,
-                                price: double.parse(widget.price),
-                                quantity: quantity,
-                              );
-                              Navigator.pushNamed(context, "/order");
-                            },
-                            borderRadius: BorderRadius.circular(18.0),
-                            child: Container(
-                              alignment: Alignment.center,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 20.0,
-                                vertical: 14.0,
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 22.0),
+                  Text("Ingredients", style: AppWidget.boldTextFeildStyle()),
+                  const SizedBox(height: 12.0),
+                  Wrap(
+                    spacing: 10.0,
+                    runSpacing: 10.0,
+                    children: widget.ingredients
+                        .map(
+                          (ingredient) => Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 14.0,
+                              vertical: 10.0,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(18.0),
+                              border: Border.all(
+                                color: const Color(0xFFE5E7EB),
                               ),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
+                            ),
+                            child: Text(ingredient),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                  const SizedBox(height: 24.0),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      color: widget.accentColor,
+                      borderRadius: BorderRadius.circular(28.0),
+                    ),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final bool stackActions = constraints.maxWidth < 360;
+
+                        return Wrap(
+                          alignment: WrapAlignment.spaceBetween,
+                          runSpacing: 14.0,
+                          spacing: 14.0,
+                          children: [
+                            SizedBox(
+                              width: stackActions ? constraints.maxWidth : null,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  const Text(
+                                    "Total Price",
+                                    style: TextStyle(color: Colors.white70),
+                                  ),
+                                  const SizedBox(height: 6.0),
+                                  Text(
+                                    "PHP ${total.toStringAsFixed(2)}",
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 24.0,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              width: stackActions ? constraints.maxWidth : null,
+                              child: InkWell(
+                                onTap: () {
+                                  CartService.instance.addItem(
+                                    name: widget.name,
+                                    image: widget.image,
+                                    subtitle: widget.description,
+                                    price: double.parse(widget.price),
+                                    quantity: quantity,
+                                  );
+                                  Navigator.pushNamed(context, "/order");
+                                },
                                 borderRadius: BorderRadius.circular(18.0),
-                              ),
-                              child: Text(
-                                "Order Now",
-                                style: TextStyle(
-                                  color: widget.accentColor,
-                                  fontWeight: FontWeight.bold,
+                                child: Container(
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0,
+                                    vertical: 14.0,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(18.0),
+                                  ),
+                                  child: Text(
+                                    "Order Now",
+                                    style: TextStyle(
+                                      color: widget.accentColor,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
+                          ],
+                        );
+                      },
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -389,7 +414,10 @@ class _FoodDetailState extends State<FoodDetail> {
           const SizedBox(height: 8.0),
           Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 4.0),
-          Text(label, style: const TextStyle(color: Colors.black54, fontSize: 12.0)),
+          Text(
+            label,
+            style: const TextStyle(color: Colors.black54, fontSize: 12.0),
+          ),
         ],
       ),
     );
